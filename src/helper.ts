@@ -1,6 +1,6 @@
 import { API_URL } from "./const";
 import { CharacterQuote, Quote } from "./type";
-import * as https from "https";
+import { fetchData } from "./utils";
 
 export async function showHelp() {
   console.log("Usage: node oss117-cli [options] (cumulative options enabled");
@@ -70,34 +70,6 @@ export function convertToQuotes(characterQuotes: CharacterQuote[]): Quote[] {
 }
 
 /**
- * Fetch Data such axios or node fetch would do
- * @param url 
- * @returns 
- */
-function fetchData(url: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    https
-      .get(url, (res) => {
-        let data = "";
-        res.on("data", (chunk) => {
-          data += chunk;
-        });
-        res.on("end", () => {
-          try {
-            resolve(JSON.parse(data));
-          } catch {
-            console.error("Error parsing data:", data);
-            reject({ data });
-          }
-        });
-      })
-      .on("error", (err) => {
-        reject(err);
-      });
-  });
-}
-
-/**
  * Fetch api to always return a list of Quote based on query
  * @param query 
  * @returns 
@@ -118,11 +90,12 @@ export function fetchQuotes(query: string = ""): Promise<Quote[]> {
     })
     .catch(async (error) => {
       console.error(
-        `Error: Could not fetch ${API_URL + query}\nerror:${error.toString()}`
+        `Error: Could not fetch ${API_URL + query}\nerror:${JSON.stringify(error)}`
       );
       if (error.data === "" && query.includes("author")) {
         console.log("Character not Found in list:");
         await displayCharacters();
+        return []
       }
     });
 }

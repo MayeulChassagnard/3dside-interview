@@ -6,7 +6,6 @@ jest.unmock("https");
 
 describe("CLI", () => {
   // let httpsGetSpy: jest.SpyInstance<ClientRequest, [url: string | URL, options: https.RequestOptions, callback?: ((res: IncomingMessage) => void) | undefined], any>;
-  let exitSpy: jest.SpyInstance<never, [code?: number | undefined], any>;
   let consoleLogSpy: jest.SpyInstance<
     void,
     [message?: any, ...optionalParams: any[]],
@@ -16,11 +15,6 @@ describe("CLI", () => {
   beforeEach(() => {
     consoleLogSpy = jest.spyOn(console, "log");
     // httpsGetSpy = jest.spyOn(https, "get");
-
-    // Mock process.exit to prevent it from exiting the test runner
-    exitSpy = jest
-      .spyOn(process, "exit")
-      .mockImplementation((() => {}) as unknown as () => never);
   });
 
   afterEach(() => {
@@ -94,7 +88,6 @@ describe("CLI", () => {
   it("should display help when --help is specified", async () => {
     process.argv = ["node", "cli.ts", "--help"];
     await cliMain();
-    expect(exitSpy).toHaveBeenCalled();
     expect(consoleLogSpy).toHaveBeenCalledWith(
       expect.stringContaining("Usage:")
     );

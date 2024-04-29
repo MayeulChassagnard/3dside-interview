@@ -17,7 +17,7 @@ export async function main() {
 
   if ("help" in params) {
     await showHelp();
-    process.exit();
+    return
   }
 
   const queryString = constructQueryString(params);
@@ -41,7 +41,7 @@ export async function main() {
       // console.debug("filteredQuotes", filteredQuotes);
       if (!filteredQuotes.length) {
         console.log("No quotes found");
-        process.exit();
+        return
       }
 
       // slice is only necessary for params.keyword but it is here as an additionnal security for other api calls
